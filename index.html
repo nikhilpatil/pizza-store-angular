@@ -1,36 +1,66 @@
 <!DOCTYPE html>
 <html>
-<head>
-  <script src="http://ajax.googleapis.com/ajax/libs/angularjs/1.4.8/angular.min.js"></script>
-  <script src="js/application.js"></script>
-</head>
-<body ng-app="pizzaStore" ng-controller="pizzaSelector">
-  <div>
-    <ul ng-repeat="pizza in pizzaInventory">
-      <li>{{pizza.name}} - {{pizza.price}}
-        <label ng-repeat="p in pizza.prices">
-          <input type="radio" ng-value="p" ng-model="pizza.selectedSize">{{p.size}} - {{p.price}} INR
-        </label>
-        <button ng-disabled="pizza.selectedSize == undefined" ng-click="order.addPizza(pizza)">Add</button>
-      </li>
-    </ul>
-  </div>
+    <head>
+        <script src="http://ajax.googleapis.com/ajax/libs/angularjs/1.4.8/angular.min.js"></script>
+        <script src="js/application.js"></script>
+        <style>
+            .order-details > div {
+                width: 40%;
+                float: left;
+                margin-right: 5%;
+            }
+        </style>
+    </head>
+    <body ng-app="pizzaStore" ng-controller="pizzaSelector">
+        <div>
+            <ul ng-repeat="pizza in pizzaInventory">
+                <li>{{pizza.name}} - {{pizza.price}}
+                    <label ng-repeat="p in pizza.prices">
+                        <input type="radio" ng-value="p" ng-model="pizza.selectedSize">{{p.size}} - {{p.price}} INR
+                    </label>
+                    <button ng-disabled="pizza.selectedSize == undefined" ng-click="order.addPizza(pizza)">Add</button>
+                </li>
+            </ul>
+        </div>
 
-  <div ng-show="order.items.length > 0">
-    <h1>Your order is</h1>
-    <table>
-      <thead>
-        <th>Name</th>
-        <th>Price</th>
-      </thead>
-    <tbody>
-      <tr ng-repeat="item in order.items track by $index">
-        <td>{{item.name}}</td>
-        <td>{{item.selectedSize.price}}</td>
-      </tr>
-      </tbody>
-    </table>
-    <div>Total : {{order.total()}}</div>
-  </div>
-</body>
+        <div class="order-details" ng-show="order.items.length > 0">
+            <div><h1>Your order is</h1>
+                <table border="1">
+                    <thead>
+                    <th>Name</th>
+                    <th>Price</th>
+                    <th>Add Toppings</th>
+                    </thead>
+                    <tbody>
+                        <tr ng-repeat="item in order.items track by $index">
+                            <td>{{item.name}}</td>
+                            <td>{{item.selectedSize.price}}</td>
+                            <td><button ng-click="toppings.showAddToppings(item)">Add</button></td>
+                        </tr>
+                    </tbody>
+                </table>
+                <hr/>
+                <div>Total : {{order.total()}}</div>
+                <hr/>
+                <!--<div ng-if="finalTotal">Final Total : {{finalTotal}}</div>-->
+            </div>
+            <div ng-if="showToppings" class="add-toppings-form">
+                <h1> Your Order </h1>
+                {{selectedPizza}} -  {{size}} - {{price}}
+                <h1>Select Toppings</h1>
+                <form name="addToppings">
+                    <ul>
+                        <li ng-repeat="toppings in toppingsInventory">
+                            <label>
+                                <input type="radio" ng-model="$parent.toppingPrice" name="name" value="{{toppings.price}}" required />
+                                {{toppings.type}} - {{toppings.price}} INR
+                            </label>
+                            
+                        </li>
+                    </ul>
+                    <button ng-disabled="addToppings.$invalid" ng-click='toppings.add(toppingPrice)'>Submit</button>
+                </form>
+            </div>
+        </div>
+    </body>
 </html>
